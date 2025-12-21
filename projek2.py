@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import streamlit as st
-from sklearn.metrics.pairwise import cosine_similarity
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -217,7 +216,22 @@ with tab1:
                 )
                 
                 # Hitung similarity
-                user_similarity = cosine_similarity(user_item_matrix)
+            def manual_cosine_similarity(user_matrix):
+    """
+    Menghitung cosine similarity matrix manual tanpa scikit-learn
+    Input: numpy array atau pandas DataFrame
+    Output: similarity matrix (numpy array)
+    """
+    # Normalisasi: bagi setiap vektor dengan norm-nya
+    norms = np.sqrt(np.sum(user_matrix**2, axis=1))
+    norms[norms == 0] = 1  # Hindari pembagian nol
+    normalized = user_matrix / norms[:, np.newaxis]
+    
+    # Hitung similarity (dot product antar vektor ternormalisasi)
+    similarity = np.dot(normalized, normalized.T)
+    return similarity
+
+                user_similarity = manual_cosine_similarity(user_item_matrix.values)
                 user_similarity_df = pd.DataFrame(
                     user_similarity,
                     index=user_item_matrix.index,
@@ -551,4 +565,5 @@ st.markdown("""
         border: 1px solid #e9ecef;
     }
 </style>
+
 """, unsafe_allow_html=True)
