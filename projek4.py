@@ -11,20 +11,15 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- FUNGSI LOAD DATA ---
 @st.cache_data
 def load_data():
-    # Load dataset dari file yang diupload
     df_places = pd.read_csv('tourism_with_id.csv')
     df_ratings = pd.read_csv('tourism_rating.csv')
     df_users = pd.read_csv('user.csv')
-    
-    # Gabungkan rating dengan nama tempat agar lebih mudah dibaca
     df_all = pd.merge(df_ratings, df_places[['Place_Id', 'Place_Name', 'Category', 'City']], on='Place_Id')
     
     return df_places, df_ratings, df_users, df_all
 
-# Inisialisasi Data
 try:
     df_places, df_ratings, df_users, df_all = load_data()
     all_place_names = sorted(df_places['Place_Name'].unique().tolist())
@@ -32,7 +27,7 @@ except FileNotFoundError:
     st.error("File CSV tidak ditemukan. Pastikan file 'tourism_with_id.csv', 'tourism_rating.csv', dan 'user.csv' ada di direktori yang sama.")
     st.stop()
 
-# Inisialisasi session state
+
 if 'new_user_ratings' not in st.session_state:
     st.session_state.new_user_ratings = {}
 
@@ -149,7 +144,6 @@ with tab2:
         for p, r in st.session_state.new_user_ratings.items():
             st.write(f"✅ {p}: {r} ⭐")
 
-# --- TAB 3: STATISTIK ---
 with tab3:
     st.header("📊 Statistik Destinasi")
     c1, c2, c3 = st.columns(3)
